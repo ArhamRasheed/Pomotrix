@@ -18,6 +18,16 @@ export const dailyStats = pgTable("daily_stats", {
   breakSessions: integer("break_sessions").notNull().default(0),
   totalFocusTime: integer("total_focus_time").notNull().default(0), // in seconds
   totalBreakTime: integer("total_break_time").notNull().default(0), // in seconds
+  xpEarned: integer("xp_earned").notNull().default(0),
+});
+
+export const userStats = pgTable("user_stats", {
+  id: serial("id").primaryKey(),
+  totalXP: integer("total_xp").notNull().default(0),
+  level: integer("level").notNull().default(1),
+  currentStreak: integer("current_streak").notNull().default(0),
+  longestStreak: integer("longest_streak").notNull().default(0),
+  lastActiveDate: text("last_active_date"),
 });
 
 export const insertSessionSchema = createInsertSchema(sessions).pick({
@@ -36,9 +46,20 @@ export const insertDailyStatsSchema = createInsertSchema(dailyStats).pick({
   breakSessions: true,
   totalFocusTime: true,
   totalBreakTime: true,
+  xpEarned: true,
+});
+
+export const insertUserStatsSchema = createInsertSchema(userStats).pick({
+  totalXP: true,
+  level: true,
+  currentStreak: true,
+  longestStreak: true,
+  lastActiveDate: true,
 });
 
 export type Session = typeof sessions.$inferSelect;
 export type InsertSession = z.infer<typeof insertSessionSchema>;
 export type DailyStats = typeof dailyStats.$inferSelect;
 export type InsertDailyStats = z.infer<typeof insertDailyStatsSchema>;
+export type UserStats = typeof userStats.$inferSelect;
+export type InsertUserStats = z.infer<typeof insertUserStatsSchema>;

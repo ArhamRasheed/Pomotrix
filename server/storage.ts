@@ -1,4 +1,4 @@
-import { sessions, dailyStats, type Session, type InsertSession, type DailyStats, type InsertDailyStats } from "@shared/schema";
+import { sessions, dailyStats, userStats, type Session, type InsertSession, type DailyStats, type InsertDailyStats, type UserStats, type InsertUserStats } from "@shared/schema";
 
 export interface IStorage {
   // Session methods
@@ -10,17 +10,30 @@ export interface IStorage {
   getDailyStats(date: string): Promise<DailyStats | undefined>;
   updateDailyStats(stats: InsertDailyStats): Promise<DailyStats>;
   getWeeklyStats(startDate: string, endDate: string): Promise<DailyStats[]>;
+  
+  // User stats methods
+  getUserStats(): Promise<UserStats>;
+  updateUserStats(stats: InsertUserStats): Promise<UserStats>;
 }
 
 export class MemStorage implements IStorage {
   private sessions: Map<number, Session>;
   private dailyStats: Map<string, DailyStats>;
+  private userStats: UserStats;
   private currentSessionId: number;
   private currentStatsId: number;
 
   constructor() {
     this.sessions = new Map();
     this.dailyStats = new Map();
+    this.userStats = {
+      id: 1,
+      totalXP: 0,
+      level: 1,
+      currentStreak: 0,
+      longestStreak: 0,
+      lastActiveDate: null,
+    };
     this.currentSessionId = 1;
     this.currentStatsId = 1;
   }
@@ -65,7 +78,8 @@ export class MemStorage implements IStorage {
         focusSessions: stats.focusSessions ?? existing.focusSessions,
         breakSessions: stats.breakSessions ?? existing.breakSessions,
         totalFocusTime: stats.totalFocusTime ?? existing.totalFocusTime,
-        totalBreakTime: stats.totalBreakTime ?? existing.totalBreakTime
+        totalBreakTime: stats.totalBreakTime ?? existing.totalBreakTime,
+        xpEarned: stats.xpEarned ?? existing.xpEarned
       };
       this.dailyStats.set(stats.date, updated);
       return updated;
@@ -77,7 +91,8 @@ export class MemStorage implements IStorage {
         focusSessions: stats.focusSessions ?? 0,
         breakSessions: stats.breakSessions ?? 0,
         totalFocusTime: stats.totalFocusTime ?? 0,
-        totalBreakTime: stats.totalBreakTime ?? 0
+        totalBreakTime: stats.totalBreakTime ?? 0,
+        xpEarned: stats.xpEarned ?? 0
       };
       this.dailyStats.set(stats.date, newStats);
       return newStats;
@@ -91,8 +106,23 @@ export class MemStorage implements IStorage {
     return stats.sort((a, b) => a.date.localeCompare(b.date));
   }
 
+  async getUserStats(): Promise<UserStats> {
+    return this.userStats;
+  }
+
+  async updateUserStats(stats: InsertUserStats): Promise<UserStats> {
+    this.userStats = {
+      ...this.userStats,
+      ...stats
+    };
+    return this.userStats;
+  }
+
   private async updateDailyStatsAfterSession(session: Session): Promise<void> {
     const existing = await this.getDailyStats(session.date);
+    
+    // Calculate XP earned (20 XP per focus session, 5 XP per break)
+    const xpEarned = session.type === 'focus' ? 20 : 5;
     
     if (existing) {
       const updated: InsertDailyStats = {
@@ -101,6 +131,7 @@ export class MemStorage implements IStorage {
         breakSessions: session.type === 'break' ? existing.breakSessions + 1 : existing.breakSessions,
         totalFocusTime: session.type === 'focus' ? existing.totalFocusTime + session.duration : existing.totalFocusTime,
         totalBreakTime: session.type === 'break' ? existing.totalBreakTime + session.duration : existing.totalBreakTime,
+        xpEarned: existing.xpEarned + xpEarned
       };
       await this.updateDailyStats(updated);
     } else {
@@ -110,9 +141,42 @@ export class MemStorage implements IStorage {
         breakSessions: session.type === 'break' ? 1 : 0,
         totalFocusTime: session.type === 'focus' ? session.duration : 0,
         totalBreakTime: session.type === 'break' ? session.duration : 0,
+        xpEarned: xpEarned
       };
       await this.updateDailyStats(newStats);
     }
+    
+    // Update user stats
+    await this.updateUserStatsAfterSession(session);
+  }
+
+  private async updateUserStatsAfterSession(session: Session): Promise<void> {
+    const xpEarned = session.type === 'focus' ? 20 : 5;
+    const newTotalXP = this.userStats.totalXP + xpEarned;
+    
+    // Calculate new level (every 100 XP = 1 level)
+    const newLevel = Math.floor(newTotalXP / 100) + 1;
+    
+    // Update streak
+    const today = session.date;
+    const yesterday = new Date(new Date(today).getTime() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    
+    let newStreak = this.userStats.currentStreak;
+    if (this.userStats.lastActiveDate === yesterday) {
+      newStreak = this.userStats.currentStreak + 1;
+    } else if (this.userStats.lastActiveDate !== today) {
+      newStreak = 1; // Reset streak if there's a gap
+    }
+    
+    const newLongestStreak = Math.max(newStreak, this.userStats.longestStreak);
+    
+    await this.updateUserStats({
+      totalXP: newTotalXP,
+      level: newLevel,
+      currentStreak: newStreak,
+      longestStreak: newLongestStreak,
+      lastActiveDate: today
+    });
   }
 }
 

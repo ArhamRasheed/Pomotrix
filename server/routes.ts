@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertSessionSchema } from "@shared/schema";
+import { insertSessionSchema, insertUserStatsSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -77,6 +77,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(stats);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch weekly stats" });
+    }
+  });
+
+  // Get user stats
+  app.get('/api/user/stats', async (req, res) => {
+    try {
+      const stats = await storage.getUserStats();
+      res.json(stats);
+    } catch (error) {
+      console.error('Error fetching user stats:', error);
+      res.status(500).json({ error: 'Failed to fetch user stats' });
+    }
+  });
+
+  // Update user stats
+  app.patch('/api/user/stats', async (req, res) => {
+    try {
+      const validatedData = insertUserStatsSchema.parse(req.body);
+      const stats = await storage.updateUserStats(validatedData);
+      res.json(stats);
+    } catch (error) {
+      console.error('Error updating user stats:', error);
+      res.status(500).json({ error: 'Failed to update user stats' });
     }
   });
 

@@ -9,6 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import SessionNameDialog from "@/components/SessionNameDialog";
 import { Toaster } from "@/components/ui/toaster";
+import AudioControls from "@/components/AudioControls";
+import LevelingSystem from "@/components/LevelingSystem";
+import StreakTracker from "@/components/StreakTracker";
 
 export default function PomodoroPage() {
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
@@ -80,7 +83,7 @@ export default function PomodoroPage() {
       </div>
       
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-        <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
           
           {/* Timer Section */}
           <div className="lg:col-span-2 glass-morphism rounded-xl p-8 neon-border">
@@ -173,11 +176,19 @@ export default function PomodoroPage() {
             </Card>
           </div>
           
-          {/* Statistics Panel */}
-          <StatisticsPanel 
-            todayStats={todayStats}
-            recentSessions={recentSessions}
-          />
+          {/* Right Sidebar - Statistics */}
+          <div className="lg:col-span-2 space-y-6">
+            <StatisticsPanel 
+              todayStats={todayStats}
+              recentSessions={recentSessions}
+            />
+            
+            {/* Leveling System */}
+            <LevelingSystem />
+            
+            {/* Streak Tracker */}
+            <StreakTracker />
+          </div>
           
         </div>
       </div>
@@ -192,6 +203,9 @@ export default function PomodoroPage() {
 
       {/* Toast Notifications */}
       <Toaster />
+
+      {/* Audio Controls */}
+      <AudioControls />
 
     </div>
   );
