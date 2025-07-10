@@ -8,6 +8,7 @@ import { quotes } from "@/data/quotes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import SessionNameDialog from "@/components/SessionNameDialog";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function PomodoroPage() {
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
@@ -188,6 +189,9 @@ export default function PomodoroPage() {
         onSubmit={handleSessionNamed}
         sessionType={completedSession?.type || 'focus'}
       />
+
+      {/* Toast Notifications */}
+      <Toaster />
 
     </div>
   );

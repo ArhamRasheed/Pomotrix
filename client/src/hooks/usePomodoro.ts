@@ -76,9 +76,30 @@ export function usePomodoro() {
     if (completedSession) {
       await saveSession(completedSession.type, completedSession.duration, name);
       setCompletedSession(null);
+      
+      // Check for achievement unlocks
+      const newTotalSeconds = (completedSession.duration || 0);
+      const newTotalHours = newTotalSeconds / 3600;
+      
+      const achievements = [
+        { name: "FOCUS MASTER", threshold: 1 },
+        { name: "STREAK LEGEND", threshold: 5 },
+        { name: "SPEED DEMON", threshold: 10 },
+        { name: "STAR PERFORMER", threshold: 25 },
+      ];
+      
+      achievements.forEach(achievement => {
+        if (newTotalHours >= achievement.threshold) {
+          toast({
+            title: "🎉 Achievement Unlocked!",
+            description: `You've earned the ${achievement.name} achievement!`,
+            duration: 5000,
+          });
+        }
+      });
     }
     setShowNameDialog(false);
-  }, [completedSession, saveSession]);
+  }, [completedSession, saveSession, toast]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
