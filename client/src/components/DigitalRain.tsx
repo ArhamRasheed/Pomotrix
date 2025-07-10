@@ -31,24 +31,35 @@ export default function DigitalRain() {
 
     const draw = () => {
       // Semi-transparent black background for trail effect
-      ctx.fillStyle = 'rgba(10, 10, 10, 0.04)';
+      ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = '#00ff41';
-      ctx.font = `${fontSize}px monospace`;
 
       for (let i = 0; i < drops.length; i++) {
         const text = characters[Math.floor(Math.random() * characters.length)];
         const x = i * fontSize;
         const y = drops[i] * fontSize;
 
+        // Create gradient effect for each character
+        const opacity = Math.min(1, (canvas.height - y) / canvas.height + 0.3);
+        
+        // Brightest character at the front
+        if (Math.random() > 0.98) {
+          ctx.fillStyle = '#ffffff';
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = '#00ff41';
+        } else {
+          ctx.fillStyle = `rgba(0, 255, 65, ${opacity})`;
+          ctx.shadowBlur = 0;
+        }
+        
+        ctx.font = `${fontSize}px monospace`;
         ctx.fillText(text, x, y);
 
         // Random reset and speed variation
         if (y > canvas.height && Math.random() > 0.975) {
           drops[i] = 0;
         }
-        drops[i] += 0.5 + Math.random() * 0.5;
+        drops[i] += 0.4 + Math.random() * 0.6;
       }
     };
 

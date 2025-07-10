@@ -24,6 +24,8 @@ export const insertSessionSchema = createInsertSchema(sessions).pick({
   duration: true,
   completedAt: true,
   date: true,
+}).extend({
+  completedAt: z.string().transform((val) => new Date(val)),
 });
 
 export const insertDailyStatsSchema = createInsertSchema(dailyStats).pick({

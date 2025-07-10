@@ -53,6 +53,27 @@ export default function PomodoroPage() {
     <div className="min-h-screen matrix-bg overflow-hidden font-mono">
       <DigitalRain />
       
+      {/* Matrix scanlines overlay */}
+      <div className="matrix-scanlines"></div>
+      
+      {/* Floating scan line */}
+      <div className="scan-line"></div>
+      
+      {/* Floating particles */}
+      <div className="floating-particles">
+        {Array.from({ length: 20 }, (_, i) => (
+          <div
+            key={i}
+            className="particle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 15}s`,
+              animationDuration: `${12 + Math.random() * 6}s`
+            }}
+          />
+        ))}
+      </div>
+      
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
         <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
           
@@ -66,7 +87,8 @@ export default function PomodoroPage() {
             </div>
             
             {/* Timer Display */}
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mb-8 relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-cyan-400/20 rounded-full blur-xl animate-pulse"></div>
               <TimerCircle 
                 timeLeft={timeLeft}
                 isBreak={isBreak}
@@ -79,34 +101,35 @@ export default function PomodoroPage() {
               <Button 
                 onClick={start}
                 disabled={isRunning}
-                className="cyber-button px-8 py-3 text-lg font-semibold"
+                className="cyber-button px-8 py-3 text-lg font-semibold font-mono tracking-wider"
               >
-                START
+                {isRunning ? 'RUNNING' : 'START'}
               </Button>
               <Button 
                 onClick={pause}
                 disabled={!isRunning}
-                className="cyber-button px-8 py-3 text-lg font-semibold"
+                className="cyber-button px-8 py-3 text-lg font-semibold font-mono tracking-wider"
               >
                 PAUSE
               </Button>
               <Button 
                 onClick={reset}
-                className="cyber-button px-8 py-3 text-lg font-semibold"
+                className="cyber-button px-8 py-3 text-lg font-semibold font-mono tracking-wider"
               >
                 RESET
               </Button>
             </div>
             
             {/* Session Quote */}
-            <Card className="glass-morphism neon-border bg-transparent">
-              <CardContent className="p-6">
+            <Card className="glass-morphism neon-border bg-transparent relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400/5 to-cyan-400/5"></div>
+              <CardContent className="p-6 relative z-10">
                 <div className="text-center">
-                  <div className="text-cyan-400 text-sm mb-2">SESSION QUOTE</div>
-                  <p className="text-lg italic text-white mb-2">
+                  <div className="text-cyan-400 text-sm mb-2 font-mono tracking-wider">SESSION QUOTE</div>
+                  <p className="text-lg italic text-white mb-2 leading-relaxed">
                     "{currentQuote.text}"
                   </p>
-                  <div className="text-cyan-400 text-sm">- {currentQuote.author}</div>
+                  <div className="text-cyan-400 text-sm font-mono">- {currentQuote.author}</div>
                 </div>
               </CardContent>
             </Card>

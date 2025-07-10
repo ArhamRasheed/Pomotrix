@@ -69,7 +69,7 @@ export function usePomodoro() {
       interval = setInterval(() => {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
-    } else if (timeLeft === 0) {
+    } else if (timeLeft === 0 && isRunning) {
       switchMode();
     }
 

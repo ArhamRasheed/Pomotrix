@@ -55,12 +55,26 @@ export class MemStorage implements IStorage {
   async updateDailyStats(stats: InsertDailyStats): Promise<DailyStats> {
     const existing = this.dailyStats.get(stats.date);
     if (existing) {
-      const updated: DailyStats = { ...existing, ...stats };
+      const updated: DailyStats = { 
+        ...existing, 
+        ...stats,
+        focusSessions: stats.focusSessions ?? existing.focusSessions,
+        breakSessions: stats.breakSessions ?? existing.breakSessions,
+        totalFocusTime: stats.totalFocusTime ?? existing.totalFocusTime,
+        totalBreakTime: stats.totalBreakTime ?? existing.totalBreakTime
+      };
       this.dailyStats.set(stats.date, updated);
       return updated;
     } else {
       const id = this.currentStatsId++;
-      const newStats: DailyStats = { id, ...stats };
+      const newStats: DailyStats = { 
+        id, 
+        date: stats.date,
+        focusSessions: stats.focusSessions ?? 0,
+        breakSessions: stats.breakSessions ?? 0,
+        totalFocusTime: stats.totalFocusTime ?? 0,
+        totalBreakTime: stats.totalBreakTime ?? 0
+      };
       this.dailyStats.set(stats.date, newStats);
       return newStats;
     }

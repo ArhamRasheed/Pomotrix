@@ -12,7 +12,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const session = await storage.createSession(sessionData);
       res.json(session);
     } catch (error) {
-      res.status(400).json({ error: "Invalid session data" });
+      console.error("Session creation error:", error);
+      res.status(400).json({ 
+        error: "Invalid session data", 
+        details: error instanceof Error ? error.message : "Unknown error" 
+      });
     }
   });
 
