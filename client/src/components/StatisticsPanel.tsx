@@ -52,39 +52,6 @@ export default function StatisticsPanel({ todayStats, recentSessions }: Statisti
       {/* Streak Tracker */}
       <StreakTracker />
 
-      {/* Weekly Stats */}
-      <Card className="glass-morphism neon-border bg-transparent">
-        <CardContent className="p-6">
-          <div className="text-center mb-4">
-            <div className="text-cyan-400 text-sm">WEEKLY PROGRESS</div>
-          </div>
-          <div className="space-y-3">
-            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day, index) => {
-              const today = new Date();
-              const dayIndex = today.getDay() === 0 ? 6 : today.getDay() - 1; // Convert Sunday=0 to Sunday=6
-              const isToday = index === dayIndex;
-              const sessionsCount = isToday ? (todayStats?.focusSessions || 0) : 0;
-              const progressValue = Math.min(100, (sessionsCount / 10) * 100); // 10 sessions = 100%
-              
-              return (
-                <div key={day} className="flex justify-between items-center">
-                  <span className="text-sm font-mono text-cyan-400">{day}</span>
-                  <div className="flex-1 mx-3 bg-gray-800 rounded-full h-2">
-                    <div 
-                      className="bg-gradient-to-r from-green-400 to-cyan-400 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${progressValue}%` }}
-                    />
-                  </div>
-                  <span className="text-sm text-green-400 font-mono">
-                    {sessionsCount}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Overall Progress Bar */}
       <Card className="glass-morphism neon-border bg-transparent">
         <CardContent className="p-6">

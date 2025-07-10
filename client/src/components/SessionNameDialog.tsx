@@ -32,11 +32,14 @@ export default function SessionNameDialog({ isOpen, onClose, onSubmit, sessionTy
           <DialogTitle className="text-green-400 font-mono tracking-wider">
             NAME YOUR {sessionType.toUpperCase()} SESSION
           </DialogTitle>
+          <p className="text-cyan-400/70 text-sm font-mono">
+            Give your session a custom name to track your progress better
+          </p>
         </DialogHeader>
         <div className="space-y-4">
           <div>
             <Label htmlFor="sessionName" className="text-cyan-400 font-mono text-sm">
-              Session Name (optional)
+              Session Name
             </Label>
             <Input
               id="sessionName"

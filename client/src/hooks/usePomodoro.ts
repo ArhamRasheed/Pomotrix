@@ -48,13 +48,9 @@ export function usePomodoro() {
     const sessionType = isBreak ? 'break' : 'focus';
     
     if (completedDuration > 0) {
-      // Only show name dialog for focus sessions
-      if (sessionType === 'focus') {
-        setCompletedSession({ type: sessionType, duration: completedDuration });
-        setShowNameDialog(true);
-      } else {
-        await saveSession(sessionType, completedDuration);
-      }
+      // Show name dialog for both focus and break sessions
+      setCompletedSession({ type: sessionType, duration: completedDuration });
+      setShowNameDialog(true);
     }
 
     setIsBreak(!isBreak);
