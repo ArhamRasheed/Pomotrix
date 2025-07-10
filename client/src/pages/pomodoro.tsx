@@ -83,53 +83,58 @@ export default function PomodoroPage() {
       </div>
       
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-        <div className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
           
           {/* Timer Section */}
-          <div className="lg:col-span-2 glass-morphism rounded-xl p-8 neon-border">
-            <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold neon-text neon-flicker mb-2">
-                MATRIX POMODORO
-              </h1>
-              <p className="text-cyan-400 text-lg">Focus. Execute. Transcend.</p>
-            </div>
-            
-            {/* Timer Display */}
-            <div className="flex justify-center mb-8 relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-cyan-400/20 rounded-full blur-xl animate-pulse"></div>
-              <TimerCircle 
-                timeLeft={timeLeft}
-                isBreak={isBreak}
-                progress={progress}
-              />
-            </div>
-            
-            {/* Timer Controls */}
-            <div className="flex justify-center gap-4 mb-8">
-              <Button 
-                onClick={start}
-                disabled={isRunning}
-                className="cyber-button px-8 py-3 text-lg font-semibold font-mono tracking-wider"
-              >
-                {isRunning ? 'RUNNING' : 'START'}
-              </Button>
-              <Button 
-                onClick={pause}
-                disabled={!isRunning}
-                className="cyber-button px-8 py-3 text-lg font-semibold font-mono tracking-wider"
-              >
-                PAUSE
-              </Button>
-              <Button 
-                onClick={reset}
-                className="cyber-button px-8 py-3 text-lg font-semibold font-mono tracking-wider"
-              >
-                RESET
-              </Button>
-            </div>
-            
+          <div className="lg:col-span-2 space-y-6">
+            {/* Main Timer Card */}
+            <Card className="glass-morphism neon-border bg-transparent">
+              <CardContent className="p-8">
+                <div className="text-center mb-8">
+                  <h1 className="text-4xl font-bold neon-text neon-flicker mb-2">
+                    MATRIX POMODORO
+                  </h1>
+                  <p className="text-cyan-400 text-lg">Focus. Execute. Transcend.</p>
+                </div>
+                
+                {/* Timer Display */}
+                <div className="flex justify-center mb-8 relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-cyan-400/20 rounded-full blur-xl animate-pulse"></div>
+                  <TimerCircle 
+                    timeLeft={timeLeft}
+                    isBreak={isBreak}
+                    progress={progress}
+                  />
+                </div>
+                
+                {/* Timer Controls */}
+                <div className="flex justify-center gap-4">
+                  <Button 
+                    onClick={start}
+                    disabled={isRunning}
+                    className="cyber-button px-8 py-3 text-lg font-semibold font-mono tracking-wider"
+                  >
+                    {isRunning ? 'RUNNING' : 'START'}
+                  </Button>
+                  <Button 
+                    onClick={pause}
+                    disabled={!isRunning}
+                    className="cyber-button px-8 py-3 text-lg font-semibold font-mono tracking-wider"
+                  >
+                    PAUSE
+                  </Button>
+                  <Button 
+                    onClick={reset}
+                    className="cyber-button px-8 py-3 text-lg font-semibold font-mono tracking-wider"
+                  >
+                    RESET
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Session Quote */}
-            <Card className="glass-morphism neon-border bg-transparent relative overflow-hidden mb-6">
+            <Card className="glass-morphism neon-border bg-transparent relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-r from-green-400/5 to-cyan-400/5"></div>
               <CardContent className="p-6 relative z-10">
                 <div className="text-center">
@@ -142,49 +147,52 @@ export default function PomodoroPage() {
               </CardContent>
             </Card>
 
-            {/* Recent Sessions */}
-            <Card className="glass-morphism neon-border bg-transparent relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-green-400/5 to-cyan-400/5"></div>
-              <CardContent className="p-6 relative z-10">
-                <div className="text-center mb-4">
-                  <div className="text-cyan-400 text-sm font-mono tracking-wider">RECENT SESSIONS</div>
-                </div>
-                <div className="space-y-2">
-                  {recentSessions?.slice(0, 6).map((session) => (
-                    <div key={session.id} className="flex justify-between items-center text-sm bg-gray-900/30 rounded p-2">
-                      <span className="text-green-400 font-mono text-xs">
-                        {new Date(session.completedAt).toLocaleTimeString('en-US', { 
-                          hour: '2-digit', 
-                          minute: '2-digit' 
-                        })}
-                      </span>
-                      <span className="text-white capitalize text-xs">
-                        {session.name || (session.type === 'focus' ? 'Focus Block' : 'Break')}
-                      </span>
-                      <span className="text-cyan-400 font-mono text-xs">
-                        {Math.floor(session.duration / 60)}m
-                      </span>
-                    </div>
-                  ))}
-                  {(!recentSessions || recentSessions.length === 0) && (
-                    <div className="text-center text-gray-500 text-sm py-4">
-                      No sessions recorded yet
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            {/* Bottom Row - Split Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Recent Sessions */}
+              <Card className="glass-morphism neon-border bg-transparent relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-green-400/5 to-cyan-400/5"></div>
+                <CardContent className="p-6 relative z-10">
+                  <div className="text-center mb-4">
+                    <div className="text-cyan-400 text-sm font-mono tracking-wider">RECENT SESSIONS</div>
+                  </div>
+                  <div className="space-y-2">
+                    {recentSessions?.slice(0, 4).map((session) => (
+                      <div key={session.id} className="flex justify-between items-center text-sm bg-gray-900/30 rounded p-2">
+                        <span className="text-green-400 font-mono text-xs">
+                          {new Date(session.completedAt).toLocaleTimeString('en-US', { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                          })}
+                        </span>
+                        <span className="text-white capitalize text-xs">
+                          {session.name || (session.type === 'focus' ? 'Focus Block' : 'Break')}
+                        </span>
+                        <span className="text-cyan-400 font-mono text-xs">
+                          {Math.floor(session.duration / 60)}m
+                        </span>
+                      </div>
+                    ))}
+                    {(!recentSessions || recentSessions.length === 0) && (
+                      <div className="text-center text-gray-500 text-sm py-4">
+                        No sessions recorded yet
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Leveling System */}
+              <LevelingSystem />
+            </div>
           </div>
           
           {/* Right Sidebar - Statistics */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="space-y-6">
             <StatisticsPanel 
               todayStats={todayStats}
               recentSessions={recentSessions}
             />
-            
-            {/* Leveling System */}
-            <LevelingSystem />
             
             {/* Streak Tracker */}
             <StreakTracker />
