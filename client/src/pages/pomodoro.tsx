@@ -185,6 +185,31 @@ export default function PomodoroPage() {
               {/* Leveling System */}
               <LevelingSystem />
             </div>
+
+            {/* Weekly Progress */}
+            <Card className="glass-morphism neon-border bg-transparent relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400/5 to-cyan-400/5"></div>
+              <CardContent className="p-6 relative z-10">
+                <div className="text-center mb-4">
+                  <div className="text-cyan-400 text-sm font-mono tracking-wider">WEEKLY PROGRESS</div>
+                </div>
+                <div className="grid grid-cols-7 gap-2">
+                  {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, index) => {
+                    const isToday = index === (new Date().getDay() === 0 ? 6 : new Date().getDay() - 1);
+                    const sessions = isToday ? (todayStats?.focusSessions || 0) : 0;
+                    const focusMinutes = isToday ? (todayStats?.focusMinutes || 0) : 0;
+                    
+                    return (
+                      <div key={day} className={`text-center p-2 rounded ${isToday ? 'bg-cyan-400/20' : 'bg-gray-900/20'}`}>
+                        <div className="text-xs text-cyan-400 font-mono mb-1">{day}</div>
+                        <div className="text-lg font-bold text-white">{sessions}</div>
+                        <div className="text-xs text-green-400">{Math.floor(focusMinutes / 60)}h{focusMinutes % 60}m</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
           </div>
           
           {/* Right Sidebar - Statistics */}
@@ -193,9 +218,6 @@ export default function PomodoroPage() {
               todayStats={todayStats}
               recentSessions={recentSessions}
             />
-            
-            {/* Streak Tracker */}
-            <StreakTracker />
           </div>
           
         </div>

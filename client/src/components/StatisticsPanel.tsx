@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Target, Zap, Award, Star } from "lucide-react";
+import StreakTracker from "./StreakTracker";
 
 interface StatisticsPanelProps {
   todayStats?: any;
@@ -47,6 +48,9 @@ export default function StatisticsPanel({ todayStats, recentSessions }: Statisti
           </div>
         </CardContent>
       </Card>
+
+      {/* Streak Tracker */}
+      <StreakTracker />
 
       {/* Weekly Stats */}
       <Card className="glass-morphism neon-border bg-transparent">
