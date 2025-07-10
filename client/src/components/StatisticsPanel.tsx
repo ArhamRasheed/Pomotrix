@@ -55,19 +55,20 @@ export default function StatisticsPanel({ todayStats, recentSessions }: Statisti
             <div className="text-cyan-400 text-sm">WEEKLY PROGRESS</div>
           </div>
           <div className="space-y-3">
-            {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((day, index) => {
-              const progressValue = Math.min(100, ((index + 1) * 12) % 100);
-              const sessionsCount = Math.floor(progressValue / 10);
+            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day, index) => {
+              // Start from 0 for all days since no previous data
+              const progressValue = 0;
+              const sessionsCount = 0;
               return (
                 <div key={day} className="flex justify-between items-center">
-                  <span className="text-sm">{day}</span>
+                  <span className="text-sm font-mono">{day}</span>
                   <div className="flex-1 mx-3 bg-gray-800 rounded-full h-2">
                     <div 
                       className="bg-gradient-to-r from-green-400 to-cyan-400 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${progressValue}%` }}
                     />
                   </div>
-                  <span className="text-sm text-green-400">
+                  <span className="text-sm text-green-400 font-mono">
                     {sessionsCount}
                   </span>
                 </div>
@@ -95,34 +96,7 @@ export default function StatisticsPanel({ todayStats, recentSessions }: Statisti
         </CardContent>
       </Card>
 
-      {/* Session History */}
-      <Card className="glass-morphism neon-border bg-transparent">
-        <CardContent className="p-6">
-          <div className="text-center mb-4">
-            <div className="text-cyan-400 text-sm">RECENT SESSIONS</div>
-          </div>
-          <div className="space-y-2">
-            {recentSessions?.slice(0, 8).map((session, index) => (
-              <div key={session.id} className="flex justify-between items-center text-sm">
-                <span className="text-green-400">
-                  {formatSessionTime(session.completedAt)}
-                </span>
-                <span className="capitalize">
-                  {session.type === 'focus' ? 'Focus Block' : 'Break'}
-                </span>
-                <span className="text-cyan-400">
-                  {formatDuration(session.duration)}
-                </span>
-              </div>
-            ))}
-            {(!recentSessions || recentSessions.length === 0) && (
-              <div className="text-center text-gray-500 text-sm py-4">
-                No sessions recorded yet
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+
     </div>
   );
 }

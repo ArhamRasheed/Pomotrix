@@ -12,6 +12,8 @@ export function usePomodoro() {
   const [isRunning, setIsRunning] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
   const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
+  const [showNameDialog, setShowNameDialog] = useState(false);
+  const [completedSession, setCompletedSession] = useState<{type: 'focus' | 'break', duration: number} | null>(null);
   
   const { playAlarm } = useAudio();
   const { toast } = useToast();
@@ -28,10 +30,11 @@ export function usePomodoro() {
     },
   });
 
-  const saveSession = useCallback(async (type: 'focus' | 'break', duration: number) => {
+  const saveSession = useCallback(async (type: 'focus' | 'break', duration: number, name?: string) => {
     const now = new Date();
     const sessionData = {
       type,
+      name: name || null,
       duration,
       completedAt: now.toISOString(),
       date: now.toISOString().split('T')[0],
@@ -42,9 +45,16 @@ export function usePomodoro() {
 
   const switchMode = useCallback(async () => {
     const completedDuration = isBreak ? BREAK_TIME - timeLeft : FOCUS_TIME - timeLeft;
+    const sessionType = isBreak ? 'break' : 'focus';
     
     if (completedDuration > 0) {
-      await saveSession(isBreak ? 'break' : 'focus', completedDuration);
+      // Only show name dialog for focus sessions
+      if (sessionType === 'focus') {
+        setCompletedSession({ type: sessionType, duration: completedDuration });
+        setShowNameDialog(true);
+      } else {
+        await saveSession(sessionType, completedDuration);
+      }
     }
 
     setIsBreak(!isBreak);
@@ -61,6 +71,14 @@ export function usePomodoro() {
       description: isBreak ? "Time to focus again!" : "Time for a break!",
     });
   }, [isBreak, timeLeft, playAlarm, toast, saveSession]);
+
+  const handleSessionNamed = useCallback(async (name: string) => {
+    if (completedSession) {
+      await saveSession(completedSession.type, completedSession.duration, name);
+      setCompletedSession(null);
+    }
+    setShowNameDialog(false);
+  }, [completedSession, saveSession]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -105,5 +123,9 @@ export function usePomodoro() {
     start,
     pause,
     reset,
+    showNameDialog,
+    setShowNameDialog,
+    completedSession,
+    handleSessionNamed,
   };
 }

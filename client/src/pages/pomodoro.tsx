@@ -7,7 +7,7 @@ import { usePomodoro } from "@/hooks/usePomodoro";
 import { quotes } from "@/data/quotes";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Settings } from "lucide-react";
+import SessionNameDialog from "@/components/SessionNameDialog";
 
 export default function PomodoroPage() {
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
@@ -18,7 +18,11 @@ export default function PomodoroPage() {
     progress, 
     start, 
     pause, 
-    reset 
+    reset,
+    showNameDialog,
+    setShowNameDialog,
+    completedSession,
+    handleSessionNamed
   } = usePomodoro();
 
   const today = new Date().toISOString().split('T')[0];
@@ -121,7 +125,7 @@ export default function PomodoroPage() {
             </div>
             
             {/* Session Quote */}
-            <Card className="glass-morphism neon-border bg-transparent relative overflow-hidden">
+            <Card className="glass-morphism neon-border bg-transparent relative overflow-hidden mb-6">
               <div className="absolute inset-0 bg-gradient-to-r from-green-400/5 to-cyan-400/5"></div>
               <CardContent className="p-6 relative z-10">
                 <div className="text-center">
@@ -130,6 +134,39 @@ export default function PomodoroPage() {
                     "{currentQuote.text}"
                   </p>
                   <div className="text-cyan-400 text-sm font-mono">- {currentQuote.author}</div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Recent Sessions */}
+            <Card className="glass-morphism neon-border bg-transparent relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400/5 to-cyan-400/5"></div>
+              <CardContent className="p-6 relative z-10">
+                <div className="text-center mb-4">
+                  <div className="text-cyan-400 text-sm font-mono tracking-wider">RECENT SESSIONS</div>
+                </div>
+                <div className="space-y-2">
+                  {recentSessions?.slice(0, 6).map((session) => (
+                    <div key={session.id} className="flex justify-between items-center text-sm bg-gray-900/30 rounded p-2">
+                      <span className="text-green-400 font-mono text-xs">
+                        {new Date(session.completedAt).toLocaleTimeString('en-US', { 
+                          hour: '2-digit', 
+                          minute: '2-digit' 
+                        })}
+                      </span>
+                      <span className="text-white capitalize text-xs">
+                        {session.name || (session.type === 'focus' ? 'Focus Block' : 'Break')}
+                      </span>
+                      <span className="text-cyan-400 font-mono text-xs">
+                        {Math.floor(session.duration / 60)}m
+                      </span>
+                    </div>
+                  ))}
+                  {(!recentSessions || recentSessions.length === 0) && (
+                    <div className="text-center text-gray-500 text-sm py-4">
+                      No sessions recorded yet
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -144,15 +181,14 @@ export default function PomodoroPage() {
         </div>
       </div>
       
-      {/* Floating Settings Button */}
-      <div className="fixed bottom-6 right-6 z-20">
-        <Button 
-          className="cyber-button w-14 h-14 rounded-full pulse-glow"
-          size="icon"
-        >
-          <Settings className="h-6 w-6" />
-        </Button>
-      </div>
+      {/* Session Name Dialog */}
+      <SessionNameDialog
+        isOpen={showNameDialog}
+        onClose={() => setShowNameDialog(false)}
+        onSubmit={handleSessionNamed}
+        sessionType={completedSession?.type || 'focus'}
+      />
+
     </div>
   );
 }

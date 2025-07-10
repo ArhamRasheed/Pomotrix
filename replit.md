@@ -120,3 +120,15 @@ Preferred communication style: Simple, everyday language.
 - Session persistence with PostgreSQL session store
 - Error handling with proper HTTP status codes
 - CORS and security headers configured via Express middleware
+
+## Recent Changes: Latest modifications with dates
+
+### 2025-07-10 - Session Naming and UI Improvements
+- **Session Naming**: Added ability to name focus sessions with custom names via dialog
+- **UI Fixes**: Removed unused settings icon from bottom right corner
+- **Layout Improvements**: Moved recent sessions display under quotes box for better space utilization
+- **Weekly Progress**: Fixed weekly progress to start from 0 with proper day names (Monday-Sunday)
+- **Session Tracking**: Fixed session counting accuracy for proper statistics display
+- **Schema Updates**: Added optional `name` field to sessions table for custom session names
+- **Dialog Component**: Created `SessionNameDialog` component for naming completed focus sessions
+- **Enhanced Statistics**: Improved session display with custom names and proper time formatting

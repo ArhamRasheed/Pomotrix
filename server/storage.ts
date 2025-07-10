@@ -27,7 +27,11 @@ export class MemStorage implements IStorage {
 
   async createSession(insertSession: InsertSession): Promise<Session> {
     const id = this.currentSessionId++;
-    const session: Session = { ...insertSession, id };
+    const session: Session = { 
+      ...insertSession, 
+      id,
+      name: insertSession.name || null
+    };
     this.sessions.set(id, session);
     
     // Update daily stats

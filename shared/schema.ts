@@ -5,6 +5,7 @@ import { z } from "zod";
 export const sessions = pgTable("sessions", {
   id: serial("id").primaryKey(),
   type: text("type").notNull(), // 'focus' or 'break'
+  name: text("name"), // optional session name
   duration: integer("duration").notNull(), // in seconds
   completedAt: timestamp("completed_at").notNull(),
   date: text("date").notNull(), // YYYY-MM-DD format
@@ -21,6 +22,7 @@ export const dailyStats = pgTable("daily_stats", {
 
 export const insertSessionSchema = createInsertSchema(sessions).pick({
   type: true,
+  name: true,
   duration: true,
   completedAt: true,
   date: true,
